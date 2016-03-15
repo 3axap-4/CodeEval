@@ -1,0 +1,43 @@
+namespace CodeEval
+{
+    using System;
+
+    internal class Program
+    {
+
+       private static void Main(string[] args)
+        {
+
+            var line = "<-->>";
+            string[] rows = new string[2]
+            {
+                ">>-->",
+                "<--<<"
+            };
+
+            var i = 0;
+            var result = 0;
+            string lineTmp = line.Clone().ToString();;
+            while (true)
+            {
+                int index = line.IndexOf(rows[i], StringComparison.Ordinal);
+                if (index == -1 && i == 1)
+                    break;
+                if (index == -1)
+                {
+                    line = lineTmp;
+                    i++;
+                    continue;
+                }
+                    
+                result++;
+                line = line.Substring(index + 1, line.Length-index-1);
+            }
+
+            Console.WriteLine(result.ToString());
+            Console.ReadKey();
+        }
+     
+    }
+        
+}
