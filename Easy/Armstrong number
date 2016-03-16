@@ -1,0 +1,42 @@
+/*
+Program should accept as its first argument a path to a filename. Each line in this file has a positive integer. E.g.
+Print out True/False if the number is an Armstrong number or not. E.g.
+*/
+
+using System;
+using System.Linq;
+using System.IO;
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        using (StreamReader reader = File.OpenText(args[0]))
+        while (!reader.EndOfStream)
+        {
+            string line = reader.ReadLine();
+            if (null == line)
+                continue;
+            
+            var result = line.Length == 1;
+            if (!result)
+            {
+                var resultNumber = 0;
+                var pow = line.Length;
+                line.ToCharArray()
+                    .ToList()
+                    .ForEach(x =>
+                    {
+                        var digit = Int32.Parse(x.ToString());
+                        resultNumber += (int)Math.Pow(digit, pow);
+                    });
+
+                result = resultNumber == Int32.Parse(line);
+            }
+
+
+            Console.WriteLine(result.ToString());
+            Console.ReadKey();
+        }
+    }
+}
