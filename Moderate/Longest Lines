@@ -1,0 +1,52 @@
+/*
+program should accept a path to a file as its first argument. 
+The file contains multiple lines. 
+The first line indicates the number of lines you should output, 
+the other lines are of different length and are presented randomly. 
+
+Print out the longest lines limited by specified number and sorted by their length in descending order.
+*/
+
+using System;
+using System.Linq;
+using System.IO;
+using System.Collections.Generic;
+
+
+class MyComparer<T>: IComparer<T>
+{
+    public int Compare(T x, T y)
+    {
+        var xLength = x.ToString().Length;
+        var yLength = y.ToString().Length;
+
+        return (xLength == yLength) ? 0 : (xLength > yLength) ? -1 : 1;
+    }
+}
+
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        var inputWords = new List<string>();
+        using (StreamReader reader = File.OpenText(args[0]))
+        while (!reader.EndOfStream)
+        {
+            string line = reader.ReadLine();
+            if (null == line)
+                continue;
+            // do something with line
+            inputWords.Add(line);
+            
+        }
+        
+        var countStringResult = int.Parse(inputWords[0]);
+        inputWords.RemoveAt(0);
+        inputWords.Sort(new MyComparer<string>());
+
+        Console.WriteLine(string
+        .Join("\n",
+        inputWords.TakeWhile((data, index) => index < countStringResult).ToList()));
+    }
+}
