@@ -1,0 +1,83 @@
+/*
+program which finds the first non-repeated character in a string.
+INPUT:
+The first argument is a path to a file. The file contains strings.
+
+OUTPUT:
+Print to stdout the first non-repeated character, one per line.
+
+*/
+
+using System;
+using System.Linq;
+using System.IO;
+using System.Collections.Generic;
+
+namespace CodeEval
+{
+    class Letter
+    {
+        public char Symbol { get; set; }
+        public int Position { get; set; }
+        public int DuplicateCount { get; set; }
+
+        public Letter(char symbol, int position, int duplicate)
+        {
+            Symbol = symbol;
+            Position = position;
+            DuplicateCount = duplicate;
+        }
+
+        public class SortByAscending<T> : IComparer<Letter>
+        {
+            public int Compare(Letter x, Letter y)
+            {
+
+                return (x.DuplicateCount == y.DuplicateCount) ? 0 : (x.DuplicateCount > y.DuplicateCount) ? 1 : -1;
+            }
+        }
+    }
+
+
+  class Program
+  {
+      static void Main(string[] args)
+      {
+          using (StreamReader reader = File.OpenText(args[0]))
+          while (!reader.EndOfStream)
+          {
+              string line = reader.ReadLine();
+              if (null == line)
+                  continue;
+              var letters = new List<Letter>();
+
+            ushort position = 0;
+            foreach (char c in line)
+            {
+                if (letters.FirstOrDefault(l => l.Symbol == c) != null)
+                {
+                    position++;
+                    continue;
+                }
+                    
+                ushort dublicates = 0;
+                foreach (var c1 in line)
+                {
+                    if (c == c1)
+                        dublicates++;
+                }
+
+                var newLetter = new Letter(c, position, dublicates);
+                letters.Add(newLetter);
+                position++;
+            }
+
+            letters.Sort(new Letter.SortByAscending<Letter>());
+            var first = letters.First();
+            var symbolResult = (first != null && first.DuplicateCount == 1) ? first.Symbol.ToString() : "";
+            Console.WriteLine(symbolResult);
+              
+          }
+      }
+  }
+}
