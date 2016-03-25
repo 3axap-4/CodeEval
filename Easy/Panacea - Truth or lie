@@ -1,0 +1,46 @@
+/*
+INPUT:
+The first argument is a path to a file. 
+Each line includes a test case with virus components in the hexadecimal numeral system (HEX) and 
+antivirus components in the binary number system (BIN). Virus and antivirus components are separated by a pipeline '|'.
+
+OUTPUT:
+If the numbers are the same or the sum of antivirus components is greater than the sum of virus components, 
+this means that the virus was stopped. So, print True. Otherwise, print False.
+*/
+
+
+using System;
+using System.IO;
+using System.Linq;
+using System.Collections.Generic;
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        using (StreamReader reader = File.OpenText(args[0]))
+        while (!reader.EndOfStream)
+        {
+            string line = reader.ReadLine();
+            if (null == line)
+                continue;
+            // do something with line
+            
+            var mass = line.Split('|');
+            var virus = mass[0].Trim();
+            var antivirus = mass[1].Trim();
+
+            int virusValue = 0;
+            int antivirusValue = 0;
+
+            virus.Split().ToList()
+            .ForEach(x => virusValue += Convert.ToInt32(x, 16));
+            
+            antivirus.Split().ToList()
+            .ForEach(x => antivirusValue += Convert.ToInt32(x, 2));
+
+            Console.WriteLine((antivirusValue >= virusValue).ToString());
+        }
+    }
+}
