@@ -1,0 +1,63 @@
+
+/*
+INPUT:
+The first argument is a path to a file. 
+Each line includes a test case with two strings separated by a pipeline '|'. 
+The first string is the one the developers provided to you for testing, and the second one is from design.
+
+OUTPUT :
+Write a program that counts the number of bugs and prioritizes them for fixing using the following statuses: 
+'Low' - 2 or fewer bugs; 
+'Medium' - 4 or fewer bugs; 
+'High' - 6 or fewer bugs; 
+'Critical' - more than 6 bugs; 
+'Done' - all is done; 
+*/
+
+using System;
+using System.IO;
+using System.Linq;
+using System.Collections.Generic;
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        using (StreamReader reader = File.OpenText(args[0]))
+        while (!reader.EndOfStream)
+        {
+            string line = reader.ReadLine();
+            if (null == line)
+                continue;
+                
+            // do something with line
+            var mass = line.Split('|');
+            var forTest = mass[0].TrimEnd();
+            var correct = mass[1].TrimStart();
+            var errors = 0;
+
+            if (correct.Length > forTest.Length)
+                errors += correct.Length - forTest.Length;
+
+            for (var i = 0; i < forTest.Length; i++)
+            {
+                if (i >= correct.Length)
+                {
+                    errors += forTest.Length - i;
+                    break;
+                }
+
+                if (forTest[i] != correct[i])
+                    errors++;
+            }
+            
+            var result = (errors == 0) ? "Done" : 
+                         (errors <= 2) ? "Low" : 
+                         (errors <= 4) ? "Medium" : 
+                         (errors <= 6) ? "High" : 
+                                         "Critical";
+
+            Console.WriteLine(result);
+        }
+    }
+}
