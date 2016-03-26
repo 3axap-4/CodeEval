@@ -1,0 +1,132 @@
+/*
+INPUT :
+The first argument is a path to a file. 
+Each line includes a test case: a schedule containing unsorted timestamps in HH:MM:SS format.
+
+OUTPUT:
+Sort timestamps in each schedule from the biggest to the smallest one.
+*/
+
+
+using System;
+using System.IO;
+using System.Linq;
+using System.Collections.Generic;
+
+class Program
+{
+    
+    public class MyTime : IComparable<MyTime>
+    {
+        public ushort Hours { get; set; }
+        public ushort Minutes { get; set; }
+        public ushort Seconds { get; set; }
+
+        public MyTime(string time)
+        {
+            var timeMass = time.Split(':');
+            Hours = ushort.Parse(timeMass[0]);
+            Minutes = ushort.Parse(timeMass[1]);
+            Seconds = ushort.Parse(timeMass[2]); 
+        }
+
+        public override bool Equals(object obj)
+        {
+            // If parameter is null return false.
+            if (obj == null)
+                return false;
+
+            // If parameter cannot be cast to Point return false.
+            MyTime p = obj as MyTime;
+            if ((System.Object)p == null)
+                return false;
+
+            // Return true if the fields match:
+            return (Hours == p.Hours) 
+                    && (Minutes == p.Minutes) 
+                    && (Seconds == p.Seconds);
+
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hashCode = Hours.GetHashCode();
+                hashCode = (hashCode*397) ^ Minutes.GetHashCode();
+                hashCode = (hashCode*397) ^ Seconds.GetHashCode();
+                return hashCode;
+            }
+        }
+
+        public int CompareTo(MyTime t2)
+        {
+            if (t2 == null)
+                return 1;
+
+            if (Hours == t2.Hours
+                && Minutes == t2.Minutes
+                && Seconds == t2.Seconds)
+                return 0;
+
+            if ((Hours < t2.Hours)
+                || (Hours == t2.Hours && Minutes < t2.Minutes)
+                || (Hours == t2.Hours && Minutes == t2.Minutes 
+                    && Seconds < t2.Seconds)
+                )
+                return -1;
+
+            return 1;
+        }
+
+        public static bool operator <(MyTime t1, MyTime t2)
+        {
+            return t1.CompareTo(t2) < 0;
+        }
+
+        public static bool operator >(MyTime t1, MyTime t2)
+        {
+            return t1.CompareTo(t2) > 0;
+        }
+
+        public override string ToString()
+        {
+            return string.Format("{0}:{1}:{2}", 
+            (Hours<10)?"0"+Hours.ToString(): Hours.ToString(),
+            (Minutes < 10) ? "0" + Minutes.ToString() : Minutes.ToString(),
+            (Seconds < 10) ? "0" + Seconds.ToString() : Seconds.ToString());
+        }
+    }
+
+    public class MyTimeComparer : IComparer<MyTime>
+    {
+
+        public int Compare(MyTime x, MyTime y)
+        {
+            return (Equals(x, y)) ? 0 : (x > y) ? 1 : -1;
+        }
+        }
+
+    
+    
+    static void Main(string[] args)
+    {
+        using (StreamReader reader = File.OpenText(args[0]))
+        while (!reader.EndOfStream)
+        {
+            string line = reader.ReadLine();
+            if (null == line)
+                continue;
+            // do something with line
+            
+            var mass = line.Split();
+            var listTimes = new List<MyTime>();
+            mass.ToList().ForEach(e => listTimes.Add(new MyTime(e)));
+            var myTimeComparer = new MyTimeComparer();
+            listTimes.Sort(myTimeComparer);
+            listTimes.Reverse();
+
+            Console.WriteLine(string.Join(" ", listTimes));
+        }
+    }
+}
